@@ -12,69 +12,72 @@
 <style>
 /*
 VOICE: quiet, exact study tool; nothing between you and the voice
-IDEA: a ruled notebook page the passage is written across, ten lines deep
-PICTURE: the 10-row waveform, the part already heard inked in cobalt
-COLOUR and TYPE: white, ink, cobalt #1240e0; Inter Tight for numbers, Noto Sans JP for words
-LAYOUT: cobalt strip, player column, passage list beside it (wide) or below it (phone)
+IDEA: a printed passage that lights up line by line as it is read aloud
+PICTURE: the script itself, unread text faint, read text inked, the current sentence marked in cobalt
+COLOUR and TYPE: white, ink, cobalt #1240e0; system UI type, Georgia-like serif for the English text
+LAYOUT: cobalt strip, script panel, controls under it; passage list beside (wide) or below (phone)
 */
-:root{color-scheme:light dark;--bg:light-dark(#fff,#0a0d18);--ink:light-dark(#11131a,#eef1f8);--mute:light-dark(#5f667a,#8e96aa);--line:light-dark(#e2e6ef,#232a3d);--zone:light-dark(#eef2ff,#121a2e);--acc:light-dark(#1240e0,#6e8eff);--onacc:light-dark(#fff,#0a0d18);--wave:light-dark(#c3cadb,#323b57);--strip:light-dark(#1240e0,#0f1d52)}
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0a0d18);--ink:light-dark(#11131a,#eef1f8);--mute:light-dark(#5f667a,#8e96aa);--faint:light-dark(#b9c0cf,#3d4660);--line:light-dark(#e2e6ef,#232a3d);--zone:light-dark(#eef2ff,#121a2e);--acc:light-dark(#1240e0,#6e8eff);--onacc:light-dark(#fff,#0a0d18);--hl:light-dark(#dfe6ff,#1d2a55);--strip:light-dark(#1240e0,#0f1d52)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Hiragino Sans",sans-serif;overflow-x:clip}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.strip{background:var(--strip);color:#fff;padding:12px max(5vw,16px);display:flex;align-items:center;gap:10px}
-.strip h1{font:700 22px/1.1 "Inter Tight",sans-serif;margin:0;flex:1}
-.fb{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid #ffffff66;background:transparent;color:#fff;font-size:14px;font-weight:500;display:inline-flex;align-items:center}
-main{max-width:1240px;margin:0 auto;padding:20px max(5vw,16px) 48px;display:grid;gap:24px}
-@media(min-width:900px){main{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}.side{position:sticky;top:16px}}
-.now h2{font:700 clamp(30px,7vw,44px)/1.05 "Inter Tight",sans-serif;margin:0;text-wrap:balance}
+.strip{background:var(--strip);color:#fff;padding:12px max(5vw,16px);display:flex;align-items:center;gap:8px}
+.strip h1{font-weight:700;font-size:21px;line-height:1.1;margin:0;flex:1}
+.fb{min-height:44px;padding:0 13px;border-radius:22px;border:1px solid #ffffff66;background:transparent;color:#fff;font-size:14px;font-weight:500}
+main{max-width:1240px;margin:0 auto;padding:18px max(5vw,16px) 48px;display:grid;gap:24px}
+@media(min-width:900px){main{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start}.side{position:sticky;top:16px}}
+.now h2{font-weight:700;font-size:clamp(28px,7vw,40px);line-height:1.05;margin:0}
 .sub{color:var(--mute);font-size:14px;margin-top:4px}
-.fig{position:relative;height:clamp(300px,56vh,430px);margin:16px 0 6px;background:var(--zone);border-radius:14px}
-.fig canvas{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
-.times{display:flex;justify-content:space-between;font:500 15px "Inter Tight",sans-serif;font-variant-numeric:tabular-nums;color:var(--mute)}
-.ctl{display:flex;justify-content:center;align-items:center;gap:clamp(6px,3vw,14px);margin:14px 0 6px}
+.script{margin:14px 0 10px;background:var(--zone);border-radius:14px;padding:16px 18px;height:clamp(260px,46vh,460px);overflow-y:auto;font:18px/1.75 Georgia,"Times New Roman",serif;overscroll-behavior:contain}
+.script span{color:var(--faint);border-radius:5px;padding:1px 2px;transition:color .25s,background .25s;cursor:pointer}
+.script span.done{color:var(--ink)}
+.script span.now{color:var(--ink);background:var(--hl);box-shadow:inset 0 -2px 0 var(--acc)}
+.script .none{font:15px/1.6 system-ui,sans-serif;color:var(--mute);display:grid;gap:12px;align-content:center;height:100%;text-align:center;justify-items:center}
+@media(prefers-reduced-motion:reduce){.script span{transition:none}}
+.seek{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;font-size:14px;font-variant-numeric:tabular-nums;color:var(--mute)}
+input[type=range]{width:100%;accent-color:var(--acc);height:36px;margin:0}
+.ctl{display:flex;justify-content:center;align-items:center;gap:clamp(6px,3vw,14px);margin:12px 0 6px}
 .ib{width:52px;height:52px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;padding:0}
 .ib svg{width:24px;height:24px;fill:currentColor}
-.ib b{font:700 15px "Inter Tight",sans-serif}
+.ib b{font-weight:700;font-size:15px}
 .pp{width:74px;height:74px;background:var(--acc);color:var(--onacc);border:0}
 .pp svg{width:32px;height:32px}
 .box{border-top:1px solid var(--line);padding:14px 0;display:grid;gap:10px}
 .lab{font-size:14px;color:var(--mute)}
-.rate{display:flex;align-items:center;gap:10px}
-.rate output{font:700 44px/1 "Inter Tight",sans-serif;font-variant-numeric:tabular-nums;width:3.6ch;text-align:center}
-.rate output small{font-size:22px}
-input[type=range]{width:100%;accent-color:var(--acc);height:36px;margin:0}
+.rate{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.rate output{font-weight:700;font-size:42px;line-height:1;font-variant-numeric:tabular-nums;min-width:4.4ch;text-align:center;white-space:nowrap}
+.rate input{flex:1 1 100%}
+.rate output small{font-size:21px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid var(--line);background:var(--bg);font:500 15px "Inter Tight","Noto Sans JP",sans-serif}
+.chip{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid var(--line);background:var(--bg);font-weight:500;font-size:15px}
 .chip[aria-pressed=true]{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
 .seg .chip{flex:1 1 0}
 .hint{font-size:13px;color:var(--mute);margin:0}
-.side h3{font:700 18px "Inter Tight","Noto Sans JP",sans-serif;margin:0 0 8px}
+.side h3{font-size:18px;margin:0 0 8px}
 .list{list-style:none;margin:0;padding:4px;max-height:68vh;overflow:auto;position:relative;border:1px solid var(--line);border-radius:14px}
 .list li{display:flex;align-items:center;gap:8px;padding:4px 6px 4px 12px;border-radius:10px}
 .list li.on{background:var(--zone)}
-.gl{flex:1;font:500 15px "Inter Tight",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list button{min-width:48px;height:42px;border-radius:21px;border:1px solid var(--line);background:var(--bg);font:700 15px "Inter Tight",sans-serif}
+.gl{flex:1;font-weight:500;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list button{min-width:48px;height:42px;border-radius:21px;border:1px solid var(--line);background:var(--bg);font-weight:700;font-size:15px}
 .list button.cur{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
 .list button.dim{opacity:.35}
 .empty{max-width:620px;margin:8vh auto;padding:0 max(5vw,16px)}
-.empty h2{font:700 clamp(30px,7vw,44px)/1.05 "Inter Tight","Noto Sans JP",sans-serif;margin:0 0 12px}
+.empty h2{font-size:clamp(28px,7vw,40px);line-height:1.05;margin:0 0 12px}
 .empty ol{padding-left:1.3em}
-.big{min-height:56px;padding:0 24px;border-radius:28px;border:0;background:var(--acc);color:var(--onacc);font:700 17px "Noto Sans JP",sans-serif}
+.big{min-height:52px;padding:0 22px;border-radius:26px;border:0;background:var(--acc);color:var(--onacc);font-weight:700;font-size:16px}
 .status{font-size:14px;color:var(--mute);min-height:1.5em;margin:10px 0 0}
-.swatch{position:absolute;width:0;height:0;overflow:hidden}
 </style></head><body>
 <header class="strip"><h1>Lingua Player</h1>
-<button class="fb" id="addBtn" hidden>ファイルを追加</button><button class="fb" id="repBtn" hidden>入れ替え</button></header>
-<input type="file" id="fi" multiple accept=".zip,.mp3,.m4a,.aac,.wav,application/zip,audio/mpeg,audio/mp4" hidden>
-<i class="swatch" id="cAcc" style="color:var(--acc)"></i><i class="swatch" id="cWave" style="color:var(--wave)"></i><i class="swatch" id="cMute" style="color:var(--mute)"></i>
+<button class="fb" id="addBtn" hidden>追加</button><button class="fb" id="repBtn" hidden>入れ替え</button></header>
+<input type="file" id="fi" multiple accept=".zip,.json,.mp3,.m4a,.aac,.wav,application/zip,application/json,audio/mpeg,audio/mp4" hidden>
 
 <section class="empty" id="empty">
 <h2>音声を読み込む</h2>
-<p>前に作った <b>Lingua_Eibun.zip</b> をそのまま選べばOK。ZIPの中のmp3を自動で取り出して、Passage順に並べます。</p>
-<ol><li>下のボタン →「ブラウズ」</li><li>ファイルアプリで Lingua_Eibun.zip を選ぶ</li><li>一度読み込めば、次からはこの端末に残ります</li></ol>
+<p><b>Lingua_Eibun.zip</b> をそのまま選べばOK。ZIPの中のmp3を取り出して、Passage順に並べます。スクリプトのファイル（.json）も同じボタンから読み込めます。</p>
+<ol><li>下のボタン →「ブラウズ」</li><li>ファイルアプリでZIPを選ぶ</li><li>一度読み込めば、次からはこの端末に残ります</li></ol>
 <button class="big" id="pickBtn">ZIP / 音声ファイルを選ぶ</button>
 <p class="status" id="status" role="status"></p>
 </section>
@@ -82,12 +85,12 @@ input[type=range]{width:100%;accent-color:var(--acc);height:36px;margin:0}
 <main id="player" hidden>
 <section class="now">
 <h2 id="ttl">—</h2><div class="sub" id="sub"></div>
-<div class="fig"><canvas id="wave" aria-label="波形。タップした位置へ移動"></canvas></div>
-<div class="times"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+<div class="script" id="script" aria-live="off"></div>
+<div class="seek"><span id="tCur">0:00</span><input type="range" id="sk" min="0" max="1000" step="1" value="0" aria-label="再生位置"><span id="tDur">0:00</span></div>
 <div class="ctl">
 <button class="ib" id="bPrev" aria-label="前へ"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
 <button class="ib" id="bBack" aria-label="5秒戻す"><b>−5</b></button>
-<button class="ib pp" id="bPlay" aria-label="再生"><svg id="icPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg id="icPause" viewBox="0 0 24 24" hidden><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+<button class="ib pp" id="bPlay" aria-label="再生"><svg id="icPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg id="icPause" viewBox="0 0 24 24" hidden><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
 <button class="ib" id="bFwd" aria-label="5秒進める"><b>+5</b></button>
 <button class="ib" id="bNext" aria-label="次へ"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
 </div>
@@ -114,146 +117,141 @@ input[type=range]{width:100%;accent-color:var(--acc);height:36px;margin:0}
 <script>
 {
 const $=s=>document.querySelector(s);
-const au=$('#au'),cv=$('#wave'),fi=$('#fi');
-const ROWS=10,NP=1200;
+const au=$('#au'),fi=$('#fi'),sc=$('#script'),sk=$('#sk');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-let tracks=[],cur=-1,url=null,peaks=null,db=null,actx=null,replaceNext=false,lastSave=0;
+let tracks=[],cur=-1,url=null,db=null,replaceNext=false,lastSave=0,script=null,sents=null,starts=null,shown=-2,userScroll=0,dragging=false;
 const st={rate:1,mode:'theme',filt:'all',last:null,pos:0};
 try{Object.assign(st,JSON.parse(localStorage.getItem('lp-st')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('lp-st',JSON.stringify(st))}catch(e){}};
 
 /* ---- storage ---- */
-const openDB=()=>new Promise(res=>{try{const r=indexedDB.open('lingua-player',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('files',{keyPath:'name'});d.createObjectStore('peaks')};r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}});
+const openDB=()=>new Promise(res=>{try{const r=indexedDB.open('lingua-player',2);r.onupgradeneeded=()=>{const d=r.result;for(const n of['files','peaks','meta'])if(!d.objectStoreNames.contains(n))d.createObjectStore(n,n==='files'?{keyPath:'name'}:undefined)};r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}});
 const run=(store,mode,fn)=>new Promise(res=>{if(!db)return res(null);try{const t=db.transaction(store,mode);const r=fn(t.objectStore(store));t.oncomplete=()=>res(r&&'result'in r?r.result:true);t.onerror=t.onabort=()=>res(null)}catch(e){res(null)}});
 
 /* ---- tracks ---- */
 const mk=rec=>{const base=rec.name.replace(/\.[^.]+$/,'');const m=base.match(/(?:^|[^a-z])(?:p|passage)[ _-]?0*(\d+)/i);const v=(base.match(/[_\- ]([AB])$/i)||base.match(/eibun([AB])/i)||[])[1];
- return{name:rec.name,blob:rec.blob,variant:v?v.toUpperCase():'',tk:m?'p'+(+m[1]):'f'+rec.name,label:m?'Passage '+m[1].padStart(2,'0'):base}};
+ return{name:rec.name,blob:rec.blob,variant:v?v.toUpperCase():'',num:m?+m[1]:null,tk:m?'p'+(+m[1]):'f'+rec.name,label:m?'Passage '+m[1].padStart(2,'0'):base}};
 const sortT=()=>tracks.sort((a,b)=>a.name.localeCompare(b.name,'ja',{numeric:true}));
 const vis=()=>{const l=tracks.filter(t=>st.filt==='all'||!t.variant||t.variant===st.filt);return l.length?l:tracks};
 const isAudio=n=>/\.(mp3|m4a|aac|wav)$/i.test(n);
 const mime=n=>/\.m4a$|\.aac$/i.test(n)?'audio/mp4':/\.wav$/i.test(n)?'audio/wav':'audio/mpeg';
 const say=t=>{$('#status').textContent=t;$('#status2').textContent=t};
+const validScript=o=>o&&typeof o==='object'&&o.passages&&typeof o.passages==='object';
+const setScript=async(o,from)=>{if(!validScript(o)){say('スクリプトの形式が読めませんでした。');return false}script=o;await run('meta','readwrite',s=>s.put(o,'script'));say(`スクリプトを読み込みました（${Object.keys(o.passages).length} Passage）。`);shown=-2;bindScript();return true};
 
 const addFiles=async(list,replace)=>{
- const recs=[];
+ const recs=[];let gotScript=false;
  for(const f of list){
+  if(/\.json$/i.test(f.name)){try{gotScript=await setScript(JSON.parse(await f.text()))||gotScript}catch(e){say('スクリプトのファイルが読めませんでした。')}continue}
   if(/\.zip$/i.test(f.name)||f.type==='application/zip'){
-   if(!window.JSZip){say('ZIPを開く部品が読み込めませんでした。ZIPを解凍してmp3を選んでください。');continue}
-   try{say('ZIPを開いています…');const z=await JSZip.loadAsync(f);const es=Object.values(z.files).filter(e=>!e.dir&&isAudio(e.name)&&!/(^|\/)(__MACOSX|\._)/.test(e.name));
-    let k=0;for(const e of es){const ab=await e.async('arraybuffer');const n=e.name.split('/').pop();recs.push({name:n,blob:new Blob([ab],{type:mime(n)})});if(++k%10===0)say(`取り出し中 ${k} / ${es.length}`)}
+   if(!window.JSZip){say('ZIPを開く部品が読み込めませんでした。');continue}
+   try{say('ZIPを開いています…');const z=await JSZip.loadAsync(f);const all=Object.values(z.files).filter(e=>!e.dir&&!/(^|\/)(__MACOSX|\._)/.test(e.name));
+    for(const e of all.filter(e=>/\.json$/i.test(e.name))){try{gotScript=await setScript(JSON.parse(await e.async('string')))||gotScript}catch(x){}}
+    const es=all.filter(e=>isAudio(e.name));let k=0;
+    for(const e of es){const ab=await e.async('arraybuffer');const n=e.name.split('/').pop();recs.push({name:n,blob:new Blob([ab],{type:mime(n)})});if(++k%10===0)say(`取り出し中 ${k} / ${es.length}`)}
    }catch(e){say('ZIPを開けませんでした。')}
   }else if(isAudio(f.name)||/^audio\//.test(f.type))recs.push({name:f.name,blob:f});
  }
- if(!recs.length){if(!$('#status').textContent)say('音声ファイルが見つかりませんでした。');return}
+ if(!recs.length){if(!gotScript&&!$('#status').textContent)say('音声ファイルが見つかりませんでした。');return}
  const keep=cur>=0&&!replace?tracks[cur].name:null;
  if(replace){au.pause();tracks=[];cur=-1;await run('files','readwrite',s=>s.clear())}
  for(const r of recs){const t=mk(r);const i=tracks.findIndex(x=>x.name===r.name);if(i>=0)tracks[i]=t;else tracks.push(t)}
- sortT();
- say('この端末に保存中…');
+ sortT();say('この端末に保存中…');
  const ok=await run('files','readwrite',s=>{let q;for(const r of recs)q=s.put(r);return q});
  say(ok?`${recs.length}件を読み込みました。次からは選び直さなくてOK。`:`${recs.length}件を読み込みました（この端末には保存できなかったので、次回はもう一度選んでください）。`);
  showPlayer();
  if(keep){cur=tracks.findIndex(t=>t.name===keep);renderList();renderNow()}else load(0,false);
 };
 
+/* ---- script ---- */
+const bindScript=()=>{
+ const t=tracks[cur];sents=null;starts=null;shown=-2;
+ const p=t&&t.num!=null&&script?script.passages[String(t.num)]:null;
+ if(!p||!Array.isArray(p.s)){
+  sc.innerHTML=`<div class="none"><span>${script?'このPassageのスクリプトはありません。':'スクリプトを読み込むと、読み上げに合わせて英文が点灯します。'}</span>${script?'':'<button class="chip" id="scBtn">スクリプトを読み込む</button>'}</div>`;
+  const b=$('#scBtn');if(b)b.onclick=()=>{replaceNext=false;fi.click()};return}
+ sents=p.s;starts=p[t.variant||'A']||p.A||p.B||null;
+ sc.innerHTML=sents.map((x,i)=>`<span data-k="${i}">${esc(x)}</span>`).join(' ');sc.scrollTop=0;light();
+};
+const idxAt=tm=>{if(!starts)return -1;let lo=0,hi=starts.length-1,r=-1;while(lo<=hi){const m=(lo+hi)>>1;if(starts[m]<=tm+0.05){r=m;lo=m+1}else hi=m-1}return r};
+const light=()=>{
+ if(!sents||!starts)return;const k=idxAt(au.currentTime);if(k===shown)return;
+ const sp=sc.children;
+ for(let i=0;i<sp.length;i++){sp[i].className=i<k?'done':i===k?'now':''}
+ shown=k;
+ if(k>=0&&Date.now()-userScroll>2500){const el=sp[k];const top=el.offsetTop-sc.offsetTop-sc.clientHeight*0.35;sc.scrollTo({top:Math.max(0,top),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+};
+sc.addEventListener('click',e=>{const s=e.target.closest('span[data-k]');if(!s||!starts)return;const k=+s.dataset.k;if(starts[k]==null)return;au.currentTime=Math.max(0,starts[k]-0.05);userScroll=0;light();if(au.paused){const p=au.play();if(p&&p.catch)p.catch(()=>{})}});
+for(const ev of['touchmove','wheel'])sc.addEventListener(ev,()=>{userScroll=Date.now()},{passive:true});
+
 /* ---- playback ---- */
 const load=(i,go,pos=0)=>{
  if(i<0||i>=tracks.length)return;cur=i;const t=tracks[i];
  if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(t.blob);
  au.src=url;au.preservesPitch=true;au.webkitPreservesPitch=true;au.defaultPlaybackRate=st.rate;au.playbackRate=st.rate;
- au.addEventListener('loadedmetadata',()=>{au.playbackRate=st.rate;if(pos&&pos<au.duration)au.currentTime=pos;draw()},{once:true});
- st.last=t.name;st.pos=pos;save();renderNow();renderList(true);meta();
+ au.addEventListener('loadedmetadata',()=>{au.playbackRate=st.rate;if(pos&&pos<au.duration)au.currentTime=pos;updTime();light()},{once:true});
+ st.last=t.name;st.pos=pos;save();renderNow();renderList(true);meta();bindScript();
  if(go){const p=au.play();if(p&&p.catch)p.catch(()=>{})}
- getPeaks(t);
 };
 const step=(dir,auto)=>{
  const l=vis();if(!l.length)return;const t=tracks[cur];
  if(auto&&st.mode==='theme'){const g=l.filter(x=>x.tk===t.tk);if(g.length){const j=g.indexOf(t);return load(tracks.indexOf(g[(j+1)%g.length]),true)}}
  let i=l.indexOf(t);i=i<0?0:(i+dir+l.length)%l.length;load(tracks.indexOf(l[i]),true);
 };
-const prev=()=>{if(au.currentTime>3){au.currentTime=0;draw()}else step(-1)};
-const skip=d=>{if(!au.duration)return;au.currentTime=Math.min(au.duration-0.05,Math.max(0,au.currentTime+d));draw()};
+const prev=()=>{if(au.currentTime>3){au.currentTime=0;light()}else step(-1)};
+const skip=d=>{if(!au.duration)return;au.currentTime=Math.min(au.duration-0.05,Math.max(0,au.currentTime+d));updTime();light()};
 const toggle=()=>{if(cur<0)return;if(au.paused){const p=au.play();if(p&&p.catch)p.catch(()=>{})}else au.pause()};
 const setRate=r=>{r=Math.round(Math.min(3,Math.max(0.5,+r||1))*10)/10;st.rate=r;au.defaultPlaybackRate=r;au.playbackRate=r;
  $('#rate').innerHTML=r.toFixed(1)+'<small>×</small>';$('#rs').value=r;
  for(const b of $('#presets').children)b.setAttribute('aria-pressed',+b.dataset.r===r);save()};
-
-/* ---- waveform ---- */
-const getPeaks=async t=>{
- peaks=null;draw();const key=t.name+':'+t.blob.size;let p=await run('peaks','readonly',s=>s.get(key));
- if(!p){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const ab=await t.blob.arrayBuffer();
-  const buf=await new Promise((res,rej)=>{const r=actx.decodeAudioData(ab,res,rej);if(r&&r.then)r.then(res,rej)});
-  const d=buf.getChannelData(0),sz=Math.max(1,Math.floor(d.length/NP));p=[];let mx=0;
-  for(let k=0;k<NP;k++){let m=0;const e=Math.min(d.length,(k+1)*sz);for(let j=k*sz;j<e;j+=3){const v=Math.abs(d[j]);if(v>m)m=v}p.push(m);if(m>mx)mx=m}
-  if(mx)p=p.map(v=>Math.round(v/mx*1000)/1000);run('peaks','readwrite',s=>s.put(p,key));
- }catch(e){p=null}}
- if(tracks[cur]===t){peaks=p;draw()}
-};
-const col=id=>getComputedStyle($(id)).color;
-const G=42;
-const draw=()=>{
- const W=cv.clientWidth,H=cv.clientHeight,dpr=window.devicePixelRatio||1;if(!W||!H)return;
- if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr)}
- const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);
- const acc=col('#cAcc'),wave=col('#cWave'),mute=col('#cMute');
- const dur=au.duration||0,pr=dur?au.currentTime/dur:0,rh=(H-8)/ROWS,bw=3,gap=2,nb=Math.max(10,Math.floor((W-G-12)/(bw+gap)));
- c.font='500 13px "Inter Tight",sans-serif';c.textBaseline='middle';
- for(let r=0;r<ROWS;r++){const cy=4+rh*r+rh/2;
-  c.fillStyle=mute;c.fillText(dur?fmt(dur*r/ROWS):'',8,cy);
-  for(let b=0;b<nb;b++){const f=(r*nb+b+.5)/(ROWS*nb);const a=peaks?peaks[Math.min(NP-1,Math.floor(f*NP))]:.12;
-   const h=Math.max(2,a*(rh-8));c.fillStyle=f<=pr?acc:wave;c.fillRect(G+b*(bw+gap),cy-h/2,bw,h)}}
- if(dur){const rr=Math.min(ROWS-1,Math.floor(pr*ROWS)),x=G+(pr*ROWS-rr)*nb*(bw+gap),y=4+rh*rr;c.fillStyle=acc;c.fillRect(x-1,y+2,2,rh-4)}
-};
-cv.addEventListener('click',e=>{const dur=au.duration;if(!dur)return;const R=cv.getBoundingClientRect(),W=R.width,H=R.height;
- const nb=Math.max(10,Math.floor((W-G-12)/5)),x=e.clientX-R.left,y=e.clientY-R.top,r=Math.min(ROWS-1,Math.max(0,Math.floor((y-4)/((H-8)/ROWS))));
- const fx=Math.min(1,Math.max(0,(x-G)/(nb*5)));au.currentTime=Math.min(dur-0.05,(r+fx)/ROWS*dur);draw()});
-const ro=new ResizeObserver(draw);ro.observe(cv);
-let raf=0;const tick=()=>{draw();updTime();raf=au.paused?0:requestAnimationFrame(tick)};
+let raf=0;const tick=()=>{light();updTime();raf=au.paused?0:requestAnimationFrame(tick)};
 
 /* ---- render ---- */
-const updTime=()=>{$('#tCur').textContent=fmt(au.currentTime);$('#tDur').textContent=fmt(au.duration)};
+const updTime=()=>{$('#tCur').textContent=fmt(au.currentTime);$('#tDur').textContent=fmt(au.duration);if(!dragging&&au.duration)sk.value=Math.round(au.currentTime/au.duration*1000)};
 const renderNow=()=>{const t=tracks[cur];if(!t)return;$('#ttl').textContent=t.label+(t.variant?' · '+t.variant:'');
  const l=vis(),i=l.indexOf(t);$('#sub').textContent=(i>=0?`${i+1} / ${l.length}`:`${tracks.length}件中`)+' ・ '+t.name};
 const renderList=scroll=>{const groups=[],map={};const v=new Set(vis());
  tracks.forEach((t,i)=>{if(!map[t.tk]){map[t.tk]={label:t.label,items:[]};groups.push(map[t.tk])}map[t.tk].items.push(i)});
  const L=$('#list');L.innerHTML=groups.map(g=>`<li class="${g.items.includes(cur)?'on':''}"><span class="gl">${esc(g.label)}</span>${g.items.map(i=>`<button data-i="${i}" class="${i===cur?'cur':''}${v.has(tracks[i])?'':' dim'}" aria-label="${esc(tracks[i].name)}">${esc(tracks[i].variant||'▶')}</button>`).join('')}</li>`).join('');
- if(scroll){const on=L.querySelector('li.on');if(on){const top=on.offsetTop-L.clientHeight/2+on.clientHeight/2;L.scrollTop=Math.max(0,top)}}};
+ if(scroll){const on=L.querySelector('li.on');if(on){L.scrollTop=Math.max(0,on.offsetTop-L.clientHeight/2+on.clientHeight/2)}}};
 const renderMode=()=>{for(const b of $('#modes').children)b.setAttribute('aria-pressed',b.dataset.m===st.mode);
  for(const b of $('#filts').children)b.setAttribute('aria-pressed',b.dataset.f===st.filt);
  $('#modeHint').textContent=st.mode==='theme'?'今のPassageだけを繰り返します（両方ならA→B→A…）。':'最後まで行ったら最初のPassageに戻ります。'};
-const showPlayer=()=>{$('#empty').hidden=true;$('#player').hidden=false;$('#addBtn').hidden=false;$('#repBtn').hidden=false;draw()};
+const showPlayer=()=>{$('#empty').hidden=true;$('#player').hidden=false;$('#addBtn').hidden=false;$('#repBtn').hidden=false};
 const meta=()=>{const ms=navigator.mediaSession,t=tracks[cur];if(!ms||!t)return;try{ms.metadata=new MediaMetadata({title:t.label+(t.variant?' '+t.variant:''),artist:'Lingua Metallica',album:'Lingua Player'})}catch(e){}};
+const icons=()=>{const p=!au.paused;$('#icPlay').toggleAttribute('hidden',p);$('#icPause').toggleAttribute('hidden',!p);$('#bPlay').setAttribute('aria-label',p?'一時停止':'再生')};
 
 /* ---- events ---- */
 $('#presets').innerHTML=[1,1.5,2,2.5,3].map(r=>`<button class="chip" data-r="${r}">${r.toFixed(1)}×</button>`).join('');
 $('#presets').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setRate(b.dataset.r)});
 $('#rMinus').onclick=()=>setRate(st.rate-0.1);$('#rPlus').onclick=()=>setRate(st.rate+0.1);
 $('#rs').addEventListener('input',e=>setRate(e.target.value));
+sk.addEventListener('input',()=>{dragging=true;if(au.duration){$('#tCur').textContent=fmt(sk.value/1000*au.duration)}});
+sk.addEventListener('change',()=>{if(au.duration)au.currentTime=Math.min(au.duration-0.05,sk.value/1000*au.duration);dragging=false;userScroll=0;light()});
 $('#modes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.mode=b.dataset.m;save();renderMode()});
 $('#filts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.filt=b.dataset.f;save();renderMode();renderList();renderNow()});
 $('#list').addEventListener('click',e=>{const b=e.target.closest('button');if(b)load(+b.dataset.i,true)});
 $('#bPlay').onclick=toggle;$('#bPrev').onclick=prev;$('#bNext').onclick=()=>step(1);$('#bBack').onclick=()=>skip(-5);$('#bFwd').onclick=()=>skip(5);
 $('#pickBtn').onclick=()=>{replaceNext=false;fi.click()};$('#addBtn').onclick=()=>{replaceNext=false;fi.click()};$('#repBtn').onclick=()=>{replaceNext=true;fi.click()};
 fi.addEventListener('change',async()=>{const fs=[...fi.files];fi.value='';if(fs.length)await addFiles(fs,replaceNext)});
-au.addEventListener('play',()=>{$('#icPlay').hidden=true;$('#icPause').hidden=false;$('#bPlay').setAttribute('aria-label','一時停止');if(!raf)raf=requestAnimationFrame(tick)});
-au.addEventListener('pause',()=>{$('#icPlay').hidden=false;$('#icPause').hidden=true;$('#bPlay').setAttribute('aria-label','再生');st.pos=au.currentTime;save();draw()});
+au.addEventListener('play',()=>{icons();if(!raf)raf=requestAnimationFrame(tick)});
+au.addEventListener('pause',()=>{icons();st.pos=au.currentTime;save();updTime();light()});
 au.addEventListener('ended',()=>step(1,true));
 au.addEventListener('ratechange',()=>{if(Math.abs(au.playbackRate-st.rate)>.01)au.playbackRate=st.rate});
-au.addEventListener('timeupdate',()=>{updTime();if(au.paused)draw();const n=Date.now();if(n-lastSave>3000){lastSave=n;st.pos=au.currentTime;save()}});
-au.addEventListener('durationchange',()=>{updTime();draw()});
+au.addEventListener('timeupdate',()=>{if(au.paused){updTime();light()}const n=Date.now();if(n-lastSave>3000){lastSave=n;st.pos=au.currentTime;save()}});
+au.addEventListener('seeked',()=>{updTime();light()});
+au.addEventListener('durationchange',updTime);
 document.addEventListener('keydown',e=>{if(e.target.closest('input'))return;if(e.code==='Space'){e.preventDefault();toggle()}else if(e.key==='ArrowLeft')skip(-5);else if(e.key==='ArrowRight')skip(5)});
 if(navigator.mediaSession){const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};
  h('play',()=>au.play());h('pause',()=>au.pause());h('previoustrack',prev);h('nexttrack',()=>step(1));h('seekbackward',()=>skip(-5));h('seekforward',()=>skip(5))}
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',draw);
-new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 /* ---- start ---- */
 if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 (async()=>{
- setRate(st.rate);renderMode();
+ setRate(st.rate);renderMode();icons();
  db=await openDB();try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+ const sv=await run('meta','readonly',s=>s.get('script'));if(validScript(sv))script=sv;
  const recs=await new Promise(res=>{if(!db)return res([]);try{const r=db.transaction('files').objectStore('files').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])}catch(e){res([])}});
  if(recs.length){tracks=recs.map(mk);sortT();showPlayer();const i=tracks.findIndex(t=>t.name===st.last);load(i<0?0:i,false,i<0?0:st.pos||0)}
 })();
